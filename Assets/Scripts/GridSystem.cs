@@ -1,0 +1,151 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GridSystem : MonoBehaviour
+{
+    [SerializeField]
+    Element UnitCube;
+    [SerializeField]
+    int initRowCount;
+    
+    [SerializeField]
+    int initColumnCount;
+
+
+    GridElementLevel loadedLevel;
+
+    public static GridSystem Instance;
+    public enum Direction {Up, Down, Left, Right};
+
+    void Awake ()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+    
+    void Start()
+    {
+        if (initRowCount != 0 && initColumnCount != 0)
+        {
+            GridElementLevel level = new GridElementLevel();
+            level.columns = initColumnCount;
+            level.rows = initRowCount;
+            level.elements = new List<Element>();
+            for (int i = 0; i < level.rows * level.columns; i++)
+            {
+                Element newElement = Instantiate(UnitCube);
+                level.elements.Add(newElement);
+            }
+            SetGrid(level);
+        }
+    }
+
+    public List<Element> GetUnitsFromPosition (int position, Direction dir)
+    {
+        List<Element> returnList = new List<Element>();
+        if (dir == Direction.Right)
+        {
+            int edge = (loadedLevel.columns * (position / loadedLevel.columns)) + loadedLevel.columns;
+            int index = position;
+            while (index < edge && !loadedLevel.elements[index].isWall)
+            {
+                returnList.Add(loadedLevel.elements[index]);
+                index++;
+            }
+        }
+        else if (dir == Direction.Left)
+        {
+            int edge = (loadedLevel.columns * (position / loadedLevel.columns)) - 1;
+            int index = position;
+            while (index > edge && !loadedLevel.elements[index].isWall)
+            {
+                returnList.Add(loadedLevel.elements[index]);
+                index--;
+            }
+        }
+        else if (dir == Direction.Up)
+        {
+            int index = position;
+            while (index >= 0 && !loadedLevel.elements[index].isWall)
+            {
+                returnList.Add(loadedLevel.elements[index]);
+                index -= loadedLevel.columns;
+            }
+        }
+        else if (dir == Direction.Down)
+        {
+            int index = position;
+            while (index < loadedLevel.elements.Count && !loadedLevel.elements[index].isWall)
+            {
+                returnList.Add(loadedLevel.elements[index]);
+                index += loadedLevel.columns;
+            }
+        }
+        return returnList;
+    }
+
+    public void ResetGrid()
+    {
+        SetGrid(loadedLevel);
+    }
+
+    public void SetGrid(GridElementLevel level)
+    {
+        Player.Instance.transform.parent = transform;
+        if (level.columns * level.rows != level.elements.Count)
+        {
+            Debug.LogError("Corrupted Level");
+            return;
+        }
+        loadedLevel = level;
+        for (int i = 0; i < level.rows; i++)
+        {
+            for (int j = 0; j < level.columns; j++)
+            {
+                int elementIndex = (i * level.columns) + j;
+                Element element = level.elements[elementIndex];
+                element.index = elementIndex;
+                element.transform.parent = transform;
+                element.transform.localPosition = new Vector3(j, 0, -i);
+                if (element.isWall)
+                {
+                    element.transform.localPosition = element.transform.localPosition.With(y:.125f);
+                    element.transform.Scale(element.transform.localScale.With(y:1.25f), .25f);
+                    element.transform.Color(Color.gray, .25f);
+                }
+                if (element.isInvisible)
+                {
+                    element.transform.Alpha(0f, 0f);
+                    element.isWall = true;
+                }
+                if (element.isStartPosition)
+                {
+                    element.SetCollected();
+                    Player.Instance.SetCurrentPos(element.index);
+                    Player.Instance.transform.localPosition = element.transform.localPosition.With(y:1f);
+                }
+            }
+        }
+        transform.position = new Vector3(-(level.rows / 2), transform.position.y, level.columns / 2);
+        CameraMan.Instance.MoveCameraToFit(Mathf.Max(loadedLevel.columns, loadedLevel.rows));
+    }
+
+    private void SaveCurrentLevel()
+    {
+        
+    }
+
+    public class GridElementLevel
+    {
+        public int columns;
+        public int rows;
+        public List<Element> elements;
+    }
+}
