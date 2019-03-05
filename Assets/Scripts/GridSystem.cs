@@ -114,17 +114,30 @@ public class GridSystem : MonoBehaviour
                 element.index = elementIndex;
                 element.transform.parent = transform;
                 element.transform.localPosition = new Vector3(j, 0, -i);
+
                 if (element.isWall)
                 {
                     element.transform.localPosition = element.transform.localPosition.With(y:.125f);
-                    element.transform.Scale(element.transform.localScale.With(y:1.25f), .25f);
-                    element.transform.Color(Color.gray, .25f);
+                    element.transform.Scale(element.transform.localScale.With(y:1.25f), 0f);
+                    element.transform.Color(Color.gray, 0f);
                 }
+                else
+                {
+                    element.transform.localPosition = element.transform.localPosition.With(y:0f);
+                    element.transform.Scale(element.transform.localScale.With(y:1f), 0f);
+                    element.transform.Color(Color.white, 0f);
+                }
+
                 if (element.isInvisible)
                 {
                     element.transform.Alpha(0f, 0f);
                     element.isWall = true;
                 }
+                else
+                {
+                    element.transform.Alpha(1f, 0f);
+                }
+
                 if (element.isStartPosition)
                 {
                     element.SetCollected();
