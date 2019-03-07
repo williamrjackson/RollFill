@@ -57,7 +57,15 @@ public class GridSystem : MonoBehaviour
         
         SetGrid(SaveFile.DeserializeLevelfile(number));
     }
-    
+
+    public void CheckForWin()
+    {
+        if (GameManager.IsComplete(loadedLevel))
+        {
+            Debug.Log("WIN!");
+        }
+    }
+
     public List<Element> GetUnitsFromPosition (int position, Direction dir)
     {
         List<Element> returnList = new List<Element>();

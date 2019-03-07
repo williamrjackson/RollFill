@@ -69,6 +69,7 @@ public class Player : MonoBehaviour
     }
     void EndMove()
     {
+        GridSystem.Instance.CheckForWin();
         isMoving = false;
     }
 }
