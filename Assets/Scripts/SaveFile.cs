@@ -41,6 +41,34 @@ public class SaveFile : MonoBehaviour
             streamWriter.Write (jsonString);
         }
     }
+    public static bool LevelExists(int levelIndex)
+    {
+        string path = Application.dataPath + "/Levels/Level";
+        return File.Exists(path + levelIndex.ToString() + ".json");
+    }
+
+    public static GridSystem.GridElementLevel DeserializeLevelfile(int levelIndex)
+    {
+        GridSystem.GridElementLevel loadedLevel = new GridSystem.GridElementLevel();
+        string filePath = Application.dataPath + "/Levels/Level" + levelIndex.ToString() + ".json";
+        if (File.Exists(filePath))
+        {
+            LevelData levelData = JsonUtility.FromJson<LevelData>(File.ReadAllText(filePath));
+            loadedLevel.columns = levelData.columns;
+            loadedLevel.rows = levelData.rows;
+            loadedLevel.elements = new List<Element>();
+            for (int i = 0; i < levelData.unitCubes.Length; i++)
+            {
+                Element element = Instantiate(GridSystem.Instance.UnitCube);
+                element.isWall = levelData.unitCubes[i].isWall;
+                element.isInvisible = levelData.unitCubes[i].isInvisible;
+                element.index = i;
+                loadedLevel.elements.Add(element);
+            }
+            loadedLevel.elements[levelData.startPosition].isStartPosition = true;
+        }
+        return loadedLevel;
+    }
 }
 
 [System.Serializable]

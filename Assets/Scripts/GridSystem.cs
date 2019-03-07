@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class GridSystem : MonoBehaviour
 {
-    [SerializeField]
-    Element UnitCube;
+    public Element UnitCube;
     [SerializeField]
     int initRowCount;
     
@@ -45,8 +44,20 @@ public class GridSystem : MonoBehaviour
             }
             SetGrid(level);
         }
+        else if (SaveFile.LevelExists(1))
+        {
+            LoadLevel(1);
+        }
     }
 
+    public void LoadLevel(int number)
+    {
+        if (loadedLevel != null)
+            loadedLevel.Clear();
+        
+        SetGrid(SaveFile.DeserializeLevelfile(number));
+    }
+    
     public List<Element> GetUnitsFromPosition (int position, Direction dir)
     {
         List<Element> returnList = new List<Element>();
@@ -160,5 +171,16 @@ public class GridSystem : MonoBehaviour
         public int columns;
         public int rows;
         public List<Element> elements;
+
+        public void Clear()
+        {
+            columns = 0;
+            rows = 0;
+            foreach (Element element in elements)
+            {
+                Destroy(element.gameObject);
+            }
+            elements.Clear();
+        }
     }
 }
