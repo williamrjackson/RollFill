@@ -50,7 +50,6 @@ public class Player : MonoBehaviour
 
     void Move(GridSystem.Direction dir)
     {
-        Debug.Log("Moving from " + currentPosition);
         List<Element> elements = GridSystem.Instance.GetUnitsFromPosition(currentPosition, dir);
         float dur = elements.Count * .05f;
         

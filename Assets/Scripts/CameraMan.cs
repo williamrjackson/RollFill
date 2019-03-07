@@ -23,8 +23,8 @@ public class CameraMan : MonoBehaviour
 
     public void MoveCameraToFit(int widthHeight)
     {
-        Mathf.Clamp(widthHeight, 5, 16);
-        Vector3 targetPos = Vector3.Lerp(min, max, (float)widthHeight.Remap(5f, 16f, 0f, 1f));
+        Mathf.Clamp(widthHeight, 2, 24);
+        Vector3 targetPos = Vector3.Lerp(min, max, (float)widthHeight.Remap(2f, 24f, 0f, 1f));
         Wrj.Utils.MapToCurve.Ease.Move(transform, targetPos, changeDuration);
     }
 

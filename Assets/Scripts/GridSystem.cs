@@ -175,7 +175,7 @@ public class GridSystem : MonoBehaviour
                 }
             }
         }
-        transform.position = new Vector3(-(level.rows / 2), transform.position.y, level.columns / 2);
+        transform.position = new Vector3(-(level.columns * .5f) + .5f, transform.position.y, (level.rows / 2) -.5f);
         CameraMan.Instance.MoveCameraToFit(Mathf.Max(loadedLevel.columns, loadedLevel.rows));
     }
 
