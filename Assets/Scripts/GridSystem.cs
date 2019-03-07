@@ -50,7 +50,7 @@ public class GridSystem : MonoBehaviour
             }
             SetGrid(level);
         }
-        else if (SaveFile.LevelExists(levelIndex))
+        else if (SerializeJson.LevelExists(levelIndex))
         {
             LoadLevel(levelIndex);
             if (editorContainer != null)
@@ -63,7 +63,7 @@ public class GridSystem : MonoBehaviour
         if (loadedLevel != null)
             loadedLevel.Clear();
         
-        SetGrid(SaveFile.DeserializeLevelfile(number));
+        SetGrid(SerializeJson.DeserializeLevelfile(number));
     }
 
     public void CheckForWin()
@@ -78,7 +78,7 @@ public class GridSystem : MonoBehaviour
     {
         Debug.Log("WIN!");
         loadedLevel.Clear();
-        SetGrid(SaveFile.NextLevel());
+        SetGrid(SerializeJson.NextLevel());
     }
 
     public List<Element> GetUnitsFromPosition (int position, Direction dir)
@@ -190,7 +190,7 @@ public class GridSystem : MonoBehaviour
 
     public void SaveCurrentLevel()
     {
-        SaveFile.SaveLevelToFile(loadedLevel);
+        SerializeJson.SaveLevelToFile(loadedLevel);
     }
 
     public class GridElementLevel

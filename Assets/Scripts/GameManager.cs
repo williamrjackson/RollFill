@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     public void DisplayCurrentLevel()
     {
         if (levelDisplay == null) return;
-        levelDisplay.text = "Level " + SaveFile.lastLoadedLevel.ToString();
+        levelDisplay.text = "Level " + SerializeJson.lastLoadedLevel.ToString();
     }
     public void DisplaySuccess()
     {
