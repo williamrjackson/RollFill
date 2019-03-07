@@ -639,6 +639,7 @@ MonoBehaviour:
   initRowCount: 0
   initColumnCount: 0
   editorContainer: {fileID: 803234929}
+  bypassPrefsLevel: 0
 --- !u!4 &1505106475
 Transform:
   m_ObjectHideFlags: 0

@@ -78,6 +78,7 @@ public class SaveFile : MonoBehaviour
         int nextLevelIndex = lastLoadedLevel + 1;
         if (LevelExists(nextLevelIndex))
         {
+            PlayerPrefs.SetInt("Level", nextLevelIndex);
             return DeserializeLevelfile(nextLevelIndex);
         }
         return null;

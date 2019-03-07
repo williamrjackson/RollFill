@@ -12,7 +12,9 @@ public class GridSystem : MonoBehaviour
     int initColumnCount;
     [SerializeField]
     GameObject editorContainer; 
-
+    [SerializeField]
+    private bool bypassPrefsLevel;
+    
 
 
     GridElementLevel loadedLevel;
@@ -34,6 +36,7 @@ public class GridSystem : MonoBehaviour
     
     void Start()
     {
+        int levelIndex = (bypassPrefsLevel) ? 1 : PlayerPrefs.GetInt("Level");
         if (initRowCount != 0 && initColumnCount != 0)
         {
             GridElementLevel level = new GridElementLevel();
@@ -47,9 +50,9 @@ public class GridSystem : MonoBehaviour
             }
             SetGrid(level);
         }
-        else if (SaveFile.LevelExists(1))
+        else if (SaveFile.LevelExists(levelIndex))
         {
-            LoadLevel(1);
+            LoadLevel(levelIndex);
             if (editorContainer != null)
                 editorContainer.SetActive(false);
         }
@@ -67,10 +70,14 @@ public class GridSystem : MonoBehaviour
     {
         if (GameManager.IsComplete(loadedLevel))
         {
-            Debug.Log("WIN!");
-            loadedLevel.Clear();
-            SetGrid(SaveFile.NextLevel());
+            Wrj.Utils.Delay(1f, () => WinLevel());
         }
+    }
+    private void WinLevel()
+    {
+        Debug.Log("WIN!");
+        loadedLevel.Clear();
+        SetGrid(SaveFile.NextLevel());
     }
 
     public List<Element> GetUnitsFromPosition (int position, Direction dir)
