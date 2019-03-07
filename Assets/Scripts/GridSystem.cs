@@ -190,7 +190,7 @@ public class GridSystem : MonoBehaviour
 
     public void SaveCurrentLevel()
     {
-        SerializeJson.SaveLevelToFile(loadedLevel);
+        SerializeJson.SerializeLevelToFile(loadedLevel);
     }
 
     public class GridElementLevel
