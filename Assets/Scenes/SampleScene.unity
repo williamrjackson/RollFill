@@ -636,8 +636,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnitCube: {fileID: 1216871247166996059, guid: d8888df62df4a324fb52951d2791e901,
     type: 3}
-  initRowCount: 9
-  initColumnCount: 7
+  initRowCount: 0
+  initColumnCount: 0
   editorContainer: {fileID: 803234929}
 --- !u!4 &1505106475
 Transform:
