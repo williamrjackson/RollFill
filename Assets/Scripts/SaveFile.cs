@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SaveFile : MonoBehaviour
 {
+    public static int lastLoadedLevel = 0;
 
     // Update is called once per frame
     public static void SaveLevelToFile(GridSystem.GridElementLevel level)
@@ -53,6 +54,7 @@ public class SaveFile : MonoBehaviour
         string filePath = Application.dataPath + "/Levels/Level" + levelIndex.ToString() + ".json";
         if (File.Exists(filePath))
         {
+            Debug.Log("Loading " + filePath);
             LevelData levelData = JsonUtility.FromJson<LevelData>(File.ReadAllText(filePath));
             loadedLevel.columns = levelData.columns;
             loadedLevel.rows = levelData.rows;
@@ -66,8 +68,19 @@ public class SaveFile : MonoBehaviour
                 loadedLevel.elements.Add(element);
             }
             loadedLevel.elements[levelData.startPosition].isStartPosition = true;
+            lastLoadedLevel = levelIndex;
         }
         return loadedLevel;
+    }
+    
+    public static GridSystem.GridElementLevel NextLevel()
+    {
+        int nextLevelIndex = lastLoadedLevel + 1;
+        if (LevelExists(nextLevelIndex))
+        {
+            return DeserializeLevelfile(nextLevelIndex);
+        }
+        return null;
     }
 }
 

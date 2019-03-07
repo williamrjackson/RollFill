@@ -63,6 +63,8 @@ public class GridSystem : MonoBehaviour
         if (GameManager.IsComplete(loadedLevel))
         {
             Debug.Log("WIN!");
+            loadedLevel.Clear();
+            SetGrid(SaveFile.NextLevel());
         }
     }
 
@@ -117,6 +119,9 @@ public class GridSystem : MonoBehaviour
 
     public void SetGrid(GridElementLevel level)
     {
+        if (level == null)
+            return;
+            
         Player.Instance.transform.parent = transform;
         if (level.columns * level.rows != level.elements.Count)
         {
