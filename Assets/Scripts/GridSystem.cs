@@ -10,6 +10,9 @@ public class GridSystem : MonoBehaviour
     
     [SerializeField]
     int initColumnCount;
+    [SerializeField]
+    GameObject editorContainer; 
+
 
 
     GridElementLevel loadedLevel;
@@ -47,6 +50,8 @@ public class GridSystem : MonoBehaviour
         else if (SaveFile.LevelExists(1))
         {
             LoadLevel(1);
+            if (editorContainer != null)
+                editorContainer.SetActive(false);
         }
     }
 
@@ -121,7 +126,7 @@ public class GridSystem : MonoBehaviour
     {
         if (level == null)
             return;
-            
+
         Player.Instance.transform.parent = transform;
         if (level.columns * level.rows != level.elements.Count)
         {

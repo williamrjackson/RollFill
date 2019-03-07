@@ -638,6 +638,7 @@ MonoBehaviour:
     type: 3}
   initRowCount: 0
   initColumnCount: 0
+  editorContainer: {fileID: 803234929}
 --- !u!4 &1505106475
 Transform:
   m_ObjectHideFlags: 0
