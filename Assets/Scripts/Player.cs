@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Range(.01f, .1f)]
+    public float durationPerUnit = .025f;
     public static Player Instance;
 
     private int currentPosition;
@@ -51,7 +53,7 @@ public class Player : MonoBehaviour
     void Move(GridSystem.Direction dir)
     {
         List<Element> elements = GridSystem.Instance.GetUnitsFromPosition(currentPosition, dir);
-        float dur = elements.Count * .05f;
+        float dur = elements.Count * durationPerUnit;
         
         if (elements.Count > 1)
         {
@@ -62,7 +64,7 @@ public class Player : MonoBehaviour
             foreach (Element item in elements)
             {
                 Wrj.Utils.Delay(delay, () => item.SetCollected());
-                delay += .05f;
+                delay += durationPerUnit;
             }
         }
     }

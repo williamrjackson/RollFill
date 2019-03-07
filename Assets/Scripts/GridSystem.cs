@@ -68,9 +68,10 @@ public class GridSystem : MonoBehaviour
 
     public void CheckForWin()
     {
-        if (GameManager.IsComplete(loadedLevel))
+        if (GameManager.Instance.IsComplete(loadedLevel))
         {
-            Wrj.Utils.Delay(1f, () => WinLevel());
+            GameManager.Instance.DisplaySuccess();
+            Wrj.Utils.Delay(2f, () => WinLevel());
         }
     }
     private void WinLevel()
@@ -184,6 +185,7 @@ public class GridSystem : MonoBehaviour
         }
         transform.position = new Vector3(-(level.columns * .5f) + .5f, transform.position.y, (level.rows / 2) -.5f);
         CameraMan.Instance.MoveCameraToFit(Mathf.Max(loadedLevel.columns, loadedLevel.rows));
+        GameManager.Instance.DisplayCurrentLevel();
     }
 
     public void SaveCurrentLevel()
