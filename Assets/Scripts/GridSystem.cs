@@ -150,9 +150,9 @@ public class GridSystem : MonoBehaviour
         CameraMan.Instance.MoveCameraToFit(Mathf.Max(loadedLevel.columns, loadedLevel.rows));
     }
 
-    private void SaveCurrentLevel()
+    public void SaveCurrentLevel()
     {
-        
+        SaveFile.SaveLevelToFile(loadedLevel);
     }
 
     public class GridElementLevel
