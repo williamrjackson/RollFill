@@ -4,10 +4,26 @@ using UnityEngine;
 
 public class SuccessDisplay : MonoBehaviour
 {
+    [Header("Timing")]
+    [SerializeField]
+    [Range(0f, 3f)]
+    private float delay = 0f;
+    [SerializeField]
+    [Range(0f, 3f)]
+    private float inTime = 1.5f;
+    [SerializeField]
+    [Range(0f, 3f)]
+    private float hangTime = 2f;
+    [SerializeField]
+    [Range(0f, 3f)]
+    private float outTime = .5f;
+    [Header("Text Options")]
     [SerializeField]
     private string[] successTexts;
     [SerializeField]
     private TMPro.TextMeshProUGUI textMeshProObject;
+    [SerializeField]
+    private Wrj.Utils.MapToCurve scaleCurve;
 
     private void Awake()
     {
@@ -15,13 +31,18 @@ public class SuccessDisplay : MonoBehaviour
         {
             textMeshProObject = GetComponent<TMPro.TextMeshProUGUI>();
         }
+        gameObject.Scale(Vector3.zero, 0f);
     }
     
     public void DisplaySuccess()
     {
+        Wrj.Utils.Delay(delay, () => Display());
+    }
+    private void Display()
+    {
         textMeshProObject.text = GetRandomSuccessString();
-        gameObject.EaseScale(Vector3.one, 1.5f);
-        Wrj.Utils.Delay(2f, () => gameObject.Scale(Vector3.zero, .5f));
+        scaleCurve.Scale(transform, Vector3.one, inTime);
+        Wrj.Utils.Delay(hangTime, () => gameObject.Scale(Vector3.zero, outTime));
     }
 
     private string GetRandomSuccessString()
