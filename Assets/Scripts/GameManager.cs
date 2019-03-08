@@ -6,7 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public TextMeshProUGUI levelDisplay;
-    public TextMeshProUGUI successDisplay;
+    public SuccessDisplay successDisplay;
     public static GameManager Instance;
     void Awake ()
     {
@@ -35,10 +35,10 @@ public class GameManager : MonoBehaviour
         if (levelDisplay == null) return;
         levelDisplay.text = "Level " + SerializeJson.lastLoadedLevel.ToString();
     }
+
     public void DisplaySuccess()
     {
-        if (successDisplay == null) return;
-        successDisplay.gameObject.EaseScale(Vector3.one, 1.5f);
-        Wrj.Utils.Delay(2f, () => successDisplay.gameObject.Scale(Vector3.zero, .5f));
+        successDisplay.DisplaySuccess();
     }
+
 }
