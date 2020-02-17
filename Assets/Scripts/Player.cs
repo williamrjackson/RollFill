@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class Player : MonoBehaviour
 {
     [Range(.01f, .1f)]
     public float durationPerUnit = .025f;
+    public TouchAxisCtrl touchAxisCtrl;
     public static Player Instance;
 
     private int currentPosition;
@@ -20,6 +22,32 @@ public class Player : MonoBehaviour
         else
         {
             Destroy(this);
+        }
+    }
+
+    void Start()
+    {
+        touchAxisCtrl.OnSwipe += this.OnSwipe;
+    }
+
+    private void OnSwipe(TouchAxisCtrl.Direction direction)
+    {
+        switch (direction)
+        {
+            case TouchAxisCtrl.Direction.Up:
+                Move(GridSystem.Direction.Up);
+                break;
+            case TouchAxisCtrl.Direction.Down:
+                Move(GridSystem.Direction.Down);
+                break;
+            case TouchAxisCtrl.Direction.Left:
+                Move(GridSystem.Direction.Left);
+                break;
+            case TouchAxisCtrl.Direction.Right:
+                Move(GridSystem.Direction.Right);
+                break;
+            default:
+                break;
         }
     }
 
