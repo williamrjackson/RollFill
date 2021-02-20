@@ -19,11 +19,11 @@ public class SuccessDisplay : MonoBehaviour
     private float outTime = .5f;
     [Header("Text Options")]
     [SerializeField]
-    private string[] successTexts;
+    private string[] successTexts = null;
     [SerializeField]
     private TMPro.TextMeshProUGUI textMeshProObject;
     [SerializeField]
-    private Wrj.Utils.MapToCurve scaleCurve;
+    private Wrj.Utils.MapToCurve scaleCurve = null;
 
     private void Awake()
     {
@@ -36,13 +36,13 @@ public class SuccessDisplay : MonoBehaviour
     
     public void DisplaySuccess()
     {
-        Wrj.Utils.Delay(delay, () => Display());
+        Wrj.Utils.DeferredExecution(delay, () => Display());
     }
     private void Display()
     {
         textMeshProObject.text = GetRandomSuccessString();
         scaleCurve.Scale(transform, Vector3.one, inTime);
-        Wrj.Utils.Delay(hangTime, () => gameObject.Scale(Vector3.zero, outTime));
+        Wrj.Utils.DeferredExecution(hangTime, () => gameObject.Scale(Vector3.zero, outTime));
     }
 
     private string GetRandomSuccessString()

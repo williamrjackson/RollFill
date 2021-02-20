@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
             float delay = 0f;
             foreach (Element item in elements)
             {
-                Wrj.Utils.Delay(delay, () => item.SetCollected());
+                Wrj.Utils.DeferredExecution(delay, () => item.SetCollected());
                 delay += durationPerUnit;
             }
         }

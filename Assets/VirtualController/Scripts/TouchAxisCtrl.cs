@@ -11,7 +11,7 @@ public class TouchAxisCtrl : MonoBehaviour
     [Range(0f, 1f)]
     public float nodeRange = .25f;
     public float chase = 100;
-    public Camera camera;
+    public Camera mainCam;
 
     public enum Direction { Up, Down, Left, Right };
     public delegate void SwipeDelegate(Direction direction);
@@ -67,10 +67,10 @@ public class TouchAxisCtrl : MonoBehaviour
                 for (int i = 0; i < Input.touchCount; ++i)
                 {
                     if ((!spawnOnTouch && (Input.GetTouch(i).phase == TouchPhase.Began) && 
-                        (GetPointDistance(camera.ScreenToWorldPoint(Input.GetTouch(i).position)) < GetScaledParimeter(touchArea))) 
+                        (GetPointDistance(mainCam.ScreenToWorldPoint(Input.GetTouch(i).position)) < GetScaledParimeter(touchArea))) 
                         || (spawnOnTouch && Input.GetTouch(i).phase == TouchPhase.Began))
                     {
-                        CaptureTouch(i, camera.ScreenToWorldPoint(Input.GetTouch(i).position));
+                        CaptureTouch(i, mainCam.ScreenToWorldPoint(Input.GetTouch(i).position));
                     }
                 }
             }
@@ -82,7 +82,7 @@ public class TouchAxisCtrl : MonoBehaviour
                 }
                 else
                 {
-                    HandleValidTouch(camera.ScreenToWorldPoint(Input.GetTouch(m_CapturedTouch).position));
+                    HandleValidTouch(mainCam.ScreenToWorldPoint(Input.GetTouch(m_CapturedTouch).position));
                 }
             }
         }
@@ -162,7 +162,7 @@ public class TouchAxisCtrl : MonoBehaviour
             transform.localScale = m_InitialScale;
             RaycastHit hit;
             RaycastHit2D hit2d;
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
 
             if (hit2d = Physics2D.Raycast(ray.origin, ray.direction))
             {

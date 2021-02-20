@@ -6,14 +6,15 @@ public class GridSystem : MonoBehaviour
 {
     public Element UnitCube;
     [SerializeField]
-    int initRowCount;
-    
+    int initRowCount = 0;
     [SerializeField]
-    int initColumnCount;
+    int initColumnCount = 0;
     [SerializeField]
-    GameObject editorContainer; 
+    GameObject editorContainer = null; 
     [SerializeField]
-    private bool bypassPrefsLevel;
+    private bool bypassPrefsLevel = false;
+    [SerializeField]
+    private bool isEditMode = false;
     
 
 
@@ -71,7 +72,7 @@ public class GridSystem : MonoBehaviour
         if (GameManager.Instance.IsComplete(loadedLevel))
         {
             GameManager.Instance.DisplaySuccess();
-            Wrj.Utils.Delay(2f, () => WinLevel());
+            Wrj.Utils.DeferredExecution(2f, () => WinLevel());
         }
     }
     private void WinLevel()
