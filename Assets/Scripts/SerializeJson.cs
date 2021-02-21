@@ -41,6 +41,48 @@ public class SerializeJson : MonoBehaviour
             streamWriter.Write (jsonString);
         }
     }
+
+    public static void SerializeEditToFile()
+    {
+        EditorView editor = FindObjectOfType<EditorView>();
+        if (editor == null) return;
+
+        string path = Application.dataPath + "/Levels/Level0.json";
+        Debug.Log(path);
+
+        LevelData data = new LevelData();
+
+        data.columns = editor.dimensionsY + 2;
+        data.rows = editor.dimensionsX + 2;
+        data.unitCubes = new UnitCube[editor.buttonList.Count];
+        for (int i = 0; i < data.unitCubes.Length; i++)
+        {
+            if (editor.buttonList[i].state == EditButtonState.Invisible)
+            {
+                data.unitCubes[i] = new UnitCube(true, true);
+            }
+            else if (editor.buttonList[i].state == EditButtonState.Wall)
+            {
+                data.unitCubes[i] = new UnitCube(true, false);
+            }
+            else if (editor.buttonList[i].state == EditButtonState.Floor)
+            {
+                data.unitCubes[i] = new UnitCube(false, false);
+            }
+            
+            if (editor.buttonList[i].state == EditButtonState.Start)
+            {
+                data.startPosition = i;
+            }
+        }
+
+        string jsonString = JsonUtility.ToJson(data);
+
+        using (StreamWriter streamWriter = File.CreateText(path))
+        {
+            streamWriter.Write(jsonString);
+        }
+    }
     public static bool LevelExists(int levelIndex)
     {
         string path = Application.dataPath + "/Levels/Level";

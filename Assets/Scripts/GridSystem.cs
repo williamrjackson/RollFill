@@ -10,8 +10,6 @@ public class GridSystem : MonoBehaviour
     [SerializeField]
     int initColumnCount = 0;
     [SerializeField]
-    GameObject editorContainer = null; 
-    [SerializeField]
     private bool bypassPrefsLevel = false;
     [SerializeField]
     private bool isEditMode = false;
@@ -38,6 +36,7 @@ public class GridSystem : MonoBehaviour
     void Start()
     {
         int levelIndex = (bypassPrefsLevel) ? 1 : PlayerPrefs.GetInt("Level");
+        if (isEditMode) levelIndex = 0;
         if (initRowCount != 0 && initColumnCount != 0)
         {
             GridElementLevel level = new GridElementLevel();
@@ -54,8 +53,6 @@ public class GridSystem : MonoBehaviour
         else if (SerializeJson.LevelExists(levelIndex))
         {
             LoadLevel(levelIndex);
-            if (editorContainer != null)
-                editorContainer.SetActive(false);
         }
     }
 
@@ -79,6 +76,11 @@ public class GridSystem : MonoBehaviour
     {
         Debug.Log("WIN!");
         loadedLevel.Clear();
+        if (isEditMode)
+        {
+            FindObjectOfType<TestFuctionality>().OnClick();
+            return;
+        }
         SetGrid(SerializeJson.NextLevel());
     }
 
