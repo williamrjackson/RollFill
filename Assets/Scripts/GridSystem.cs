@@ -12,15 +12,15 @@ public class GridSystem : MonoBehaviour
     [SerializeField]
     private bool bypassPrefsLevel = false;
     [SerializeField]
-    private bool isEditMode = false;
+    [Tooltip("Enable in editor scene")]
+    private bool isEditMode = false; 
     
-
-
     GridElementLevel loadedLevel;
 
     public static GridSystem Instance;
     public enum Direction {Up, Down, Left, Right};
 
+    // Singleton 
     void Awake ()
     {
         if (Instance == null)
@@ -35,6 +35,8 @@ public class GridSystem : MonoBehaviour
     
     void Start()
     {
+        // Get the last loaded level, so the user doesn't have to start at the beginning
+        // on every launch.
         int levelIndex = (bypassPrefsLevel) ? 1 : PlayerPrefs.GetInt("Level");
         if (isEditMode) levelIndex = 0;
         if (initRowCount != 0 && initColumnCount != 0)
@@ -72,18 +74,16 @@ public class GridSystem : MonoBehaviour
             Wrj.Utils.DeferredExecution(2f, () => WinLevel());
         }
     }
+
     private void WinLevel()
     {
         Debug.Log("WIN!");
         loadedLevel.Clear();
-        if (isEditMode)
-        {
-            FindObjectOfType<TestFuctionality>().OnClick();
-            return;
-        }
         SetGrid(SerializeJson.NextLevel());
     }
 
+    // Returns a list of elements from the players current position in the desired direction
+    // until a wall is hit.
     public List<Element> GetUnitsFromPosition (int position, Direction dir)
     {
         List<Element> returnList = new List<Element>();
@@ -133,6 +133,7 @@ public class GridSystem : MonoBehaviour
         SetGrid(loadedLevel);
     }
 
+    // Build a level grid based on the incoming level structure
     public void SetGrid(GridElementLevel level)
     {
         if (level == null)
@@ -180,20 +181,19 @@ public class GridSystem : MonoBehaviour
 
                 if (element.isStartPosition)
                 {
+                    // if this is the start position, automatically collect the unit
                     element.SetCollected();
+                    // set the current Pos to this element
                     Player.Instance.SetCurrentPos(element.index);
+                    // position the transform
                     Player.Instance.transform.localPosition = element.transform.localPosition.With(y:1f);
                 }
             }
         }
         transform.position = new Vector3(-(level.columns * .5f) + .5f, transform.position.y, (level.rows / 2) -.5f);
+        // Move the camera to fit the play area nicely
         CameraMan.Instance.MoveCameraToFit(Mathf.Max(loadedLevel.columns, loadedLevel.rows));
         GameManager.Instance.DisplayCurrentLevel();
-    }
-
-    public void SaveCurrentLevel()
-    {
-        SerializeJson.SerializeLevelToFile(loadedLevel);
     }
 
     public class GridElementLevel

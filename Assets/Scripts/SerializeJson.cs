@@ -7,43 +7,10 @@ public class SerializeJson : MonoBehaviour
 {
     public static int lastLoadedLevel = 0;
 
-    // Update is called once per frame
-    public static void SerializeLevelToFile(GridSystem.GridElementLevel level)
-    {
-        string path = Application.dataPath + "/Levels/Level";
-
-        int fileNameCounter = 1;
-        while (File.Exists(path + fileNameCounter.ToString() + ".json"))
-        {
-            fileNameCounter++;
-        }
-        path = path + fileNameCounter.ToString() + ".json";
-        Debug.Log(path);
-
-        LevelData data = new LevelData();
-
-        data.columns = level.columns;
-        data.rows = level.rows;
-        data.unitCubes = new UnitCube[level.elements.Count];
-        for (int i = 0; i < data.unitCubes.Length; i++)
-        {
-            data.unitCubes[i] = new UnitCube(level.elements[i].isWall, level.elements[i].isInvisible);
-            if (level.elements[i].isStartPosition)
-            {
-                data.startPosition = level.elements[i].index;
-            }
-        }
-
-        string jsonString = JsonUtility.ToJson(data);
-
-        using (StreamWriter streamWriter = File.CreateText(path))
-        {
-            streamWriter.Write(jsonString);
-        }
-    }
-
+    // write the current editor view to level 0
     public static void SerializeEditToFile()
     {
+        // Bail if there's no edit view in this scene
         EditorView editor = FindObjectOfType<EditorView>();
         if (editor == null) return;
 
@@ -52,8 +19,9 @@ public class SerializeJson : MonoBehaviour
 
         LevelData data = new LevelData();
 
-        data.columns = editor.effectiveDimensionsY;
-        data.rows = editor.effectiveDimensionsX;
+        // convert the editor cells into the json serializable LevelData
+        data.columns = editor.effectiveXDimensions;
+        data.rows = editor.effectiveYDimensions;
         data.unitCubes = new UnitCube[editor.buttonList.Count];
         for (int i = 0; i < data.unitCubes.Length; i++)
         {
@@ -78,12 +46,14 @@ public class SerializeJson : MonoBehaviour
 
         string jsonString = JsonUtility.ToJson(data);
 
+        // Write the file
         using (StreamWriter streamWriter = File.CreateText(path))
         {
             streamWriter.Write(jsonString);
         }
     }
 
+    // Return level 0 content as a LevelData object.
     public static LevelData EditLevel
     {
         get
@@ -98,12 +68,14 @@ public class SerializeJson : MonoBehaviour
         }
     }
 
+    // Check the existence of a specific level by index
     public static bool LevelExists(int levelIndex)
     {
         string path = Application.dataPath + "/Levels/Level";
         return File.Exists(path + levelIndex.ToString() + ".json");
     }
 
+    // turn the json into an actual level
     public static GridSystem.GridElementLevel DeserializeLevelfile(int levelIndex)
     {
         GridSystem.GridElementLevel loadedLevel = new GridSystem.GridElementLevel();
@@ -129,10 +101,11 @@ public class SerializeJson : MonoBehaviour
         return loadedLevel;
     }
 
-
+    // Return the next level if it exists
     public static GridSystem.GridElementLevel NextLevel()
     {
         int nextLevelIndex = lastLoadedLevel + 1;
+        // Write the level index to prefs, to persist it
         if (LevelExists(nextLevelIndex))
         {
             PlayerPrefs.SetInt("Level", nextLevelIndex);

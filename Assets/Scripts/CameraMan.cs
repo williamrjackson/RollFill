@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Makes sure the camera fits the play area nicely
 public class CameraMan : MonoBehaviour
 {
     public Vector3 min = new Vector3(0f, 5f, -3.5f);

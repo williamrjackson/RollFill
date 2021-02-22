@@ -80,14 +80,22 @@ public class Player : MonoBehaviour
 
     void Move(GridSystem.Direction dir)
     {
+        // Get the list of elements that can be traversed in the chosen direction
         List<Element> elements = GridSystem.Instance.GetUnitsFromPosition(currentPosition, dir);
+        // set the travel duration relative to the number of elements to traverse
         float dur = elements.Count * durationPerUnit;
         
         if (elements.Count > 1)
         {
             isMoving = true;
+            // move the ball. Call "EndMove()" when the movement is completed to see if this move wins the level
             Wrj.Utils.MapToCurve.EaseIn.Move(transform, elements[elements.Count - 1].transform.localPosition.With(y:transform.localPosition.y), dur, onDone: EndMove);
+            // set the current position to te last element, the destination 
             currentPosition = elements[elements.Count - 1].index;
+
+            // "Collect" the traversed elements.
+            // do it progressively by adding more of a delay
+            // to each collection.
             float delay = 0f;
             foreach (Element item in elements)
             {
@@ -96,6 +104,8 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    // Check if the level's complete after each move.
     void EndMove()
     {
         GridSystem.Instance.CheckForWin();
