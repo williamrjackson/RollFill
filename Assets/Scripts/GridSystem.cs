@@ -66,7 +66,7 @@ public class GridSystem : MonoBehaviour
 
     public void CheckForWin()
     {
-        if (GameManager.Instance.IsComplete(loadedLevel))
+        if (GameManager.Instance.IsComplete(loadedLevel) && !isEditMode)
         {
             GameManager.Instance.DisplaySuccess();
             Wrj.Utils.DeferredExecution(2f, () => WinLevel());

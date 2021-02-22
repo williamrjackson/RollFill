@@ -10,8 +10,48 @@ public class EditButton : MonoBehaviour, IPointerEnterHandler, IPointerDownHandl
 {
     public Image button;
     private Coroutine colorRoutine;
-    public EditButtonState state = EditButtonState.Floor;
-    private static EditButton currentStart;
+    private EditButtonState _state = EditButtonState.Floor;
+    private static EditButton _currentStart;
+    public static bool IsCurrentStartSet { get { return _currentStart != null; } }
+        
+
+    public EditButtonState State
+    {
+        get { return _state; }
+        set
+        {
+            if (value != _state)
+            {
+                Debug.Log(Enum.GetName(typeof(EditButtonState), _state));
+                Color color = Color.white;
+                switch (value)
+                {
+                    case EditButtonState.Floor:
+                        color = Color.white;
+                        break;
+                    case EditButtonState.Wall:
+                        color = Color.cyan;
+                        break;
+                    case EditButtonState.Start:
+                        {
+                            if (_currentStart != null)
+                                _currentStart.State = EditButtonState.Floor;
+                            _currentStart = this;
+                            color = Color.red;
+                            break;
+                        }
+                    case EditButtonState.Invisible:
+                        color = Color.gray;
+                        break;
+                    default:
+                        break;
+                }
+                StopAllCoroutines();
+                colorRoutine = StartCoroutine(ColorCell(color));
+                _state = value;
+            }
+        }
+    }
 
     IEnumerator ColorCell(Color color)
     {
@@ -38,38 +78,23 @@ public class EditButton : MonoBehaviour, IPointerEnterHandler, IPointerDownHandl
     {
         MouseClick();
     }
-    public void ResetToFloor()
-    {
-        state = EditButtonState.Floor;
-        StopAllCoroutines();
-        colorRoutine = StartCoroutine(ColorCell(Color.white));
-    }
 
     public void MouseClick()
     {
-        if (state == EditButtonState.Invisible) return;
+        if (State == EditButtonState.Invisible) return;
 
         Color color = Color.white;
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
-            if (currentStart != null)
-                currentStart.ResetToFloor();
-
-            state = EditButtonState.Start;
-            currentStart = this;
-            color = Color.red;
+            State = EditButtonState.Start;
         }
-        else if (state == EditButtonState.Floor)
+        else if (State == EditButtonState.Floor)
         {
-            state = EditButtonState.Wall;
-            color = Color.cyan;
+            State = EditButtonState.Wall;
         }
         else
         {
-            state = EditButtonState.Floor;
-            color = Color.white;
+            State = EditButtonState.Floor;
         }
-        StopAllCoroutines();
-        colorRoutine = StartCoroutine(ColorCell(color));
     }
 }

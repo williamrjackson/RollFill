@@ -19,7 +19,7 @@ public class SerializeJson : MonoBehaviour
         }
         path = path + fileNameCounter.ToString() + ".json";
         Debug.Log(path);
-        
+
         LevelData data = new LevelData();
 
         data.columns = level.columns;
@@ -34,11 +34,11 @@ public class SerializeJson : MonoBehaviour
             }
         }
 
-        string jsonString = JsonUtility.ToJson (data);
+        string jsonString = JsonUtility.ToJson(data);
 
-        using (StreamWriter streamWriter = File.CreateText (path))
+        using (StreamWriter streamWriter = File.CreateText(path))
         {
-            streamWriter.Write (jsonString);
+            streamWriter.Write(jsonString);
         }
     }
 
@@ -52,25 +52,25 @@ public class SerializeJson : MonoBehaviour
 
         LevelData data = new LevelData();
 
-        data.columns = editor.dimensionsY + 2;
-        data.rows = editor.dimensionsX + 2;
+        data.columns = editor.effectiveDimensionsY;
+        data.rows = editor.effectiveDimensionsX;
         data.unitCubes = new UnitCube[editor.buttonList.Count];
         for (int i = 0; i < data.unitCubes.Length; i++)
         {
-            if (editor.buttonList[i].state == EditButtonState.Invisible)
+            if (editor.buttonList[i].State == EditButtonState.Invisible)
             {
                 data.unitCubes[i] = new UnitCube(true, true);
             }
-            else if (editor.buttonList[i].state == EditButtonState.Wall)
+            else if (editor.buttonList[i].State == EditButtonState.Wall)
             {
                 data.unitCubes[i] = new UnitCube(true, false);
             }
-            else if (editor.buttonList[i].state == EditButtonState.Floor)
+            else if (editor.buttonList[i].State == EditButtonState.Floor)
             {
                 data.unitCubes[i] = new UnitCube(false, false);
             }
-            
-            if (editor.buttonList[i].state == EditButtonState.Start)
+
+            if (editor.buttonList[i].State == EditButtonState.Start)
             {
                 data.startPosition = i;
             }
@@ -83,6 +83,21 @@ public class SerializeJson : MonoBehaviour
             streamWriter.Write(jsonString);
         }
     }
+
+    public static LevelData EditLevel
+    {
+        get
+        {
+            string filePath = Application.dataPath + "/Levels/Level0.json";
+            if (File.Exists(filePath))
+            {
+                Debug.Log("Loading " + filePath);
+                return JsonUtility.FromJson<LevelData>(File.ReadAllText(filePath));
+            }
+            return null;
+        }
+    }
+
     public static bool LevelExists(int levelIndex)
     {
         string path = Application.dataPath + "/Levels/Level";
@@ -113,7 +128,8 @@ public class SerializeJson : MonoBehaviour
         }
         return loadedLevel;
     }
-    
+
+
     public static GridSystem.GridElementLevel NextLevel()
     {
         int nextLevelIndex = lastLoadedLevel + 1;

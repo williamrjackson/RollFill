@@ -7,15 +7,23 @@ using UnityEditor;
 public class EditorView : MonoBehaviour
 {
     public EditButton buttonPrototype = null;
-    public Image panel = null;
     public int dimensionsX = 10;
     public int dimensionsY = 10;
-    int cachedDimensionsX = 0;
-    int cachedDimensionsY = 0;
-
     public List<EditButton> buttonList = new List<EditButton>();
 
-    // Start is called before the first frame update
+    public int effectiveDimensionsX = 0;
+    public int effectiveDimensionsY = 0;
+
+    public void Reset()
+    {
+        Build(true);
+    }
+    
+    void Start()
+    {
+        Wrj.Utils.DeferredExecution(2f, () => LoadLevel());
+    }
+
     void ClearEditButtons()
     {
         if (buttonList.Count > 0)
@@ -28,37 +36,64 @@ public class EditorView : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void LoadLevel()
     {
-        if (buttonPrototype != null) 
+        var level = SerializeJson.EditLevel;
+        if (level == null)
         {
-            if (dimensionsX != cachedDimensionsX || 
-                dimensionsY != cachedDimensionsY)
+            Reset();
+            return;
+        }
+        dimensionsX = level.rows;
+        dimensionsY = level.columns;
+        Build();
+        Debug.Log("Count: " + level.unitCubes.Length);
+        for (int i = 0; i < level.unitCubes.Length; i++)
+        {
+            UnitCube element = level.unitCubes[i]; 
+            if (element.isWall)
             {
-                ClearEditButtons();
-                GridLayoutGroup grid = GetComponent<GridLayoutGroup>();
-                grid.cellSize = Vector2.one * (640 / (dimensionsX + 2));
-
-                for (int i = 0; i < dimensionsX + 2; i++)
-                {
-                    for (int j = 0; j < dimensionsY + 2; j++)
-                    {
-                        EditButton newButton = Instantiate(buttonPrototype);
-                        newButton.transform.SetParent(transform);
-                        newButton.gameObject.SetActive(true);
-                        buttonList.Add(newButton);
-                        if (i == 0 || i == dimensionsX + 1 || j == 0 || j == dimensionsY + 1)
-                        {
-                            newButton.state = EditButtonState.Invisible;
-                            newButton.transform.Color(Color.gray, .1f);
-                        }
-                    }
-                }
-                cachedDimensionsX = dimensionsX;
-                cachedDimensionsY = dimensionsY;
-                grid.constraintCount = dimensionsY + 2;
+                buttonList[i].State = EditButtonState.Wall;
+            }
+            else
+            {
+                buttonList[i].State = EditButtonState.Floor;
+            }
+            if (element.isInvisible)
+            {
+                buttonList[i].State = EditButtonState.Invisible;
             }
         }
+        buttonList[level.startPosition].State = EditButtonState.Start;
+    }
+
+    void Build(bool fresh = false)
+    {
+        int border = (fresh) ? 2 : 0;
+
+        ClearEditButtons();
+        GridLayoutGroup grid = GetComponent<GridLayoutGroup>();
+        grid.cellSize = Vector2.one * (640 / (dimensionsX + border));
+
+        for (int i = 0; i < dimensionsX + border; i++)
+        {
+            for (int j = 0; j < dimensionsY + border; j++)
+            {
+                EditButton newButton = Instantiate(buttonPrototype);
+                newButton.transform.SetParent(transform);
+                newButton.gameObject.SetActive(true);
+                buttonList.Add(newButton);
+                if (fresh)
+                {
+                    if (i == 0 || i == dimensionsX + 1 || j == 0 || j == dimensionsY + 1)
+                    {
+                        newButton.State = EditButtonState.Invisible;
+                    }
+                }
+            }
+        }
+        effectiveDimensionsX = dimensionsX + border;
+        effectiveDimensionsY = dimensionsY + border;
+        grid.constraintCount = effectiveDimensionsY;
     }
 }
