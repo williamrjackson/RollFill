@@ -11,7 +11,10 @@ public class EditorView : MonoBehaviour
     public int dimensionsY = 10;
     public List<EditButton> buttonList = new List<EditButton>();
 
+    // The inspector can be edited and not match. These are managed by the Build method.
+    [HideInInspector]
     public int effectiveDimensionsX = 0;
+    [HideInInspector]
     public int effectiveDimensionsY = 0;
 
     public void Reset()
@@ -21,7 +24,8 @@ public class EditorView : MonoBehaviour
     
     void Start()
     {
-        Wrj.Utils.DeferredExecution(2f, () => LoadLevel());
+        LoadLevel();
+//        Wrj.Utils.DeferredExecution(2f, () => LoadLevel());
     }
 
     void ClearEditButtons()
@@ -69,15 +73,13 @@ public class EditorView : MonoBehaviour
 
     void Build(bool fresh = false)
     {
-        int border = (fresh) ? 2 : 0;
-
         ClearEditButtons();
         GridLayoutGroup grid = GetComponent<GridLayoutGroup>();
-        grid.cellSize = Vector2.one * (640 / (dimensionsX + border));
+        grid.cellSize = Vector2.one * (640 / (dimensionsX));
 
-        for (int i = 0; i < dimensionsX + border; i++)
+        for (int i = 0; i < dimensionsX; i++)
         {
-            for (int j = 0; j < dimensionsY + border; j++)
+            for (int j = 0; j < dimensionsY; j++)
             {
                 EditButton newButton = Instantiate(buttonPrototype);
                 newButton.transform.SetParent(transform);
@@ -85,15 +87,15 @@ public class EditorView : MonoBehaviour
                 buttonList.Add(newButton);
                 if (fresh)
                 {
-                    if (i == 0 || i == dimensionsX + 1 || j == 0 || j == dimensionsY + 1)
+                    if (i == 0 || i == dimensionsX - 1 || j == 0 || j == dimensionsY - 1)
                     {
-                        newButton.State = EditButtonState.Invisible;
+                        newButton.State = EditButtonState.Wall;
                     }
                 }
             }
         }
-        effectiveDimensionsX = dimensionsX + border;
-        effectiveDimensionsY = dimensionsY + border;
+        effectiveDimensionsX = dimensionsX;
+        effectiveDimensionsY = dimensionsY;
         grid.constraintCount = effectiveDimensionsY;
     }
 }
