@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 
 public class EditorView : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class EditorView : MonoBehaviour
     public int yDimensions = 10;
     public List<EditButton> buttonList = new List<EditButton>();
     public HandleLabels labelHandler;
+    public ScreenSizeNotifier screenNotifier;
 
     // The inspector can be edited and not match. These are managed by the Build method.
     [HideInInspector]
@@ -18,6 +18,7 @@ public class EditorView : MonoBehaviour
     [HideInInspector]
     public int effectiveYDimensions = 0;
 
+    private GridLayoutGroup grid;
 
     // Called by the Reset button.
     // Makes a new grid based on dimensions
@@ -30,6 +31,9 @@ public class EditorView : MonoBehaviour
     
     void Start()
     {
+        grid = GetComponent<GridLayoutGroup>();
+        screenNotifier.OnScreenChange += () => StartCoroutine(SetCellSize());
+
         // load the edit level if possible on start
         LoadLevel();
     }
@@ -89,9 +93,7 @@ public class EditorView : MonoBehaviour
         ClearEditButtons();
         
         // Set the grid size
-        GridLayoutGroup grid = GetComponent<GridLayoutGroup>();
-        grid.cellSize = Vector2.one * (640 / (yDimensions));
-
+        StartCoroutine(SetCellSize());
         // Add buttons based on the disabled prototype in the hierarchy
         for (int i = 0; i < yDimensions; i++)
         {
@@ -119,5 +121,12 @@ public class EditorView : MonoBehaviour
         // Set the grid constraint to the number of desired columns
         grid.constraintCount = effectiveXDimensions;
         labelHandler.UpdateFields();
+    }
+    private IEnumerator SetCellSize()
+    {
+        yield return new WaitForEndOfFrame();
+        float rectHeight = GetComponent<RectTransform>().rect.height;
+        Debug.Log(rectHeight);
+        grid.cellSize = Vector2.one * (rectHeight / (yDimensions));
     }
 }
