@@ -10,12 +10,14 @@ public class EditorView : MonoBehaviour
     public int xDimensions = 10;
     public int yDimensions = 10;
     public List<EditButton> buttonList = new List<EditButton>();
+    public HandleLabels labelHandler;
 
     // The inspector can be edited and not match. These are managed by the Build method.
     [HideInInspector]
     public int effectiveXDimensions = 0;
     [HideInInspector]
     public int effectiveYDimensions = 0;
+
 
     // Called by the Reset button.
     // Makes a new grid based on dimensions
@@ -116,5 +118,6 @@ public class EditorView : MonoBehaviour
 
         // Set the grid constraint to the number of desired columns
         grid.constraintCount = effectiveXDimensions;
+        labelHandler.UpdateFields();
     }
 }
