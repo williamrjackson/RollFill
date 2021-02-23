@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Wrj;
 
 public class HandleLabels : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class HandleLabels : MonoBehaviour
 
     public void UpdateValues()
     {
-        Color current = Color.white;
-        Color edited = Color.yellow;
+        Color current = UIColor.Clouds;
+        Color edited = UIColor.SunFlower;
         bool xEdited = false;
         bool yEdited = false;
         if (int.TryParse(inputX.text, out int xVal))

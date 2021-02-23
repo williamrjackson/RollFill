@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Wrj;
 
 public enum EditButtonState { Floor, Wall, Start, Invisible }
 // Buttons representing puzzle units in the EditorView
@@ -33,10 +34,10 @@ public class EditButton : MonoBehaviour, IPointerEnterHandler, IPointerDownHandl
                 switch (value)
                 {
                     case EditButtonState.Floor:
-                        color = Color.white;
+                        color = UIColor.Clouds;
                         break;
                     case EditButtonState.Wall:
-                        color = Color.cyan;
+                        color = UIColor.PeterRiver;
                         break;
                     case EditButtonState.Start:
                         {
@@ -45,11 +46,11 @@ public class EditButton : MonoBehaviour, IPointerEnterHandler, IPointerDownHandl
                                 _currentStart.State = EditButtonState.Floor;
                             // Set this button as the start
                             _currentStart = this;
-                            color = Color.red;
+                            color = UIColor.Pomegranate;
                             break;
                         }
                     case EditButtonState.Invisible:
-                        color = Color.gray;
+                        color = UIColor.Concrete;
                         break;
                     default:
                         break;
