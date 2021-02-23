@@ -126,7 +126,6 @@ public class EditorView : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         float rectHeight = GetComponent<RectTransform>().rect.height;
-        Debug.Log(rectHeight);
         grid.cellSize = Vector2.one * (rectHeight / (yDimensions));
     }
 }
